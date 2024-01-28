@@ -1,0 +1,126 @@
+body{
+  background-image: url("background.jpg");
+  background-size: cover;
+  font-family: "Stylus";
+}
+
+th, td {
+    border: 4px solid;
+    border-radius: 10px;
+}
+
+#descriptions{
+  width: 70%;
+  height: 10%;
+  margin-bottom: 20px;
+}
+
+#descriptions input[type="text"]{
+  background-color: rgb(202, 184, 163);
+  border: 4px solid;
+  border-radius: 10px;
+  width: 60%;
+  height: 90%;
+  font-size: 30px;
+}
+
+input[type="number"]{
+  background-color: rgb(202, 184, 163);
+  border: 4px solid;
+  border-radius: 10px;
+  width: 20%;
+  height: 90%;
+  font-size: 30px;
+}
+
+
+#sendDescription{
+  background-color: burlywood;
+  border: 4px solid;
+  border-radius: 10px;
+  width: 18%;
+  height: 90%;
+  font-size: 30px;
+}
+
+#wordGrid{
+    width: 100%;
+    height: 80%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 10px;
+}
+
+
+
+button{
+  background-color: burlywood;
+}
+
+.board button{
+  background-image: url("blank.png");
+  background-size: cover;
+  border: 0;
+  height: 100%;
+  width: 100%;
+  color: black;
+  font-weight: bold;
+  font-size: 40px;
+  border-radius: 10px;
+}
+
+.board .revealedBlue{
+  background-image: url("blueMale.png");
+  color: rgba(0, 0, 0, 0.0);
+}
+
+.board .unrevealedBlue{
+  background-image: linear-gradient(rgba(0, 0, 150, 0.7), rgba(0, 0, 150, 0.5)), url("blank.png");
+}
+
+.board .revealedRed{
+  background-image: url("redWoman.png");
+  color: rgba(0, 0, 0, 0.0);
+}
+
+.board .unrevealedRed{
+  background-image: linear-gradient(rgba(150, 0, 0, 0.7), rgba(150, 0, 0, 0.5)), url("blank.png");
+}
+
+.board .revealedNeutral{
+  background-image: url("neutralMan.png");
+  color: rgba(0, 0, 0, 0.0);
+}
+
+.board button:hover{
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("blank.png");
+  background-size: cover;
+  color: rgba(0, 0, 0, 1.0);
+}
+
+.board .revealedBlue:hover{
+  background-image: linear-gradient(rgba(0, 0, 130, 0.5), rgba(0, 0, 130, 0.5)), url("blank.png");
+}
+
+.board .unrevealedBlue:hover{
+  background-image: linear-gradient(rgba(0, 0, 80, 0.5), rgba(0, 0, 80, 0.5)), url("blank.png");
+}
+
+.board .unrevealedBlack{
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("blank.png");
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.board .revealedRed:hover{
+  background-image: linear-gradient(rgba(130, 0, 0, 0.5), rgba(130, 0, 0, 0.5)), url("blank.png");
+}
+
+.board .unrevealedRed:hover{
+  background-image: linear-gradient(rgba(80, 0, 0, 0.5), rgba(80, 0, 0, 0.5)), url("blank.png");
+}
+
+.board .revealedNeutral:hover{
+  background-image: linear-gradient(rgba(165, 144, 120, 0.5), rgba(165, 144, 120, 0.5)), url("blank.png");
+}
+
+
