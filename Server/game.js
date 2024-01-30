@@ -1,28 +1,33 @@
-const { GRID_SIZE, AGENTS_NUMBER } = require('./constants');
+const { GRID_SIZE, AGENTS_NUMBER, ROOM_ID_LENGTH } = require('./constants');
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 module.exports = {
     initGame,
-    gameLoop,
+    makeRoomId
 }
 
 function initGame() {
-    //generować GRID_SIZE x GRID_SIZE
     let generatedWords = [
-        ['raz', 'dwa', 'trzy', 'cztery', 'pięć'],
-        ['sześć', 'siedem', 'osiem', 'dziewięć', 'dziesięć'],
-        ['11', '12', '13', '14', '15'],
-        ['16', '17', '18', '19', '20'],
-        ['21', '22', '23', '24', '25']
+        ['kot', 'liść', 'klawiatura', 'palec', 'wieża'],
+        ['kolano', 'pies', 'korona', 'krasnal', 'plastik'],
+        ['egzamin', 'poduszka', 'dom', 'łyżwa', 'mięsień'],
+        ['zeszyt', 'ściąga', 'prezent', 'zlew', 'śnieg'],
+        ['Egipt', 'karton', 'bramka', 'hasło', 'igła']
     ];
-    //losować agentow drużyn i killera
-    let generatedAgentsTeams = [
-        [0, 2, 2, 2, 0],
-        [1, 0, 2, 3, 1],
-        [1, 1, 1, 1, 1],
-        [1, 0, 2, 0, 1],
-        [0, 2, 2, 2, 0]
-    ];    
-
+    let agentsIdentities = [
+        [1, 1, 1, 2, 0],
+        [0, 2, 1, 0, 0],
+        [1, 2, 3, 0, 0],
+        [0, 0, 0, 2, 1],
+        [2, 1, 1, 2, 2]
+    ];
+    let revealedIdentities = [
+        [0, 0, 1, 1, 1],
+        [1, 1, 1, 0, 1],
+        [0, 0, 0, 1, 0],
+        [0, 0, 0, 1, 1],
+        [1, 0, 1, 1, 0]
+    ]; 
 
     return {
         teams: [{
@@ -30,20 +35,33 @@ function initGame() {
         }, {
             agentsLeft: AGENTS_NUMBER
         }],
+        rolesToPlayers: {
+            blueChef: null,
+            redChef: null,
+            blueAgent: null,
+            redAgent: null,
+        },
+        rolesToSockets: {
+            blueChef: null,
+            redChef: null,
+            blueAgent: null,
+            redAgent: null,
+        },
+        playersToRoles: {},
         words: generatedWords, 
-        agentsTeams: generatedAgentsTeams,
+        agentsIdentities: agentsIdentities,
+        revealedIdentities: revealedIdentities,
         gridsize: GRID_SIZE,
         currentTurn: 1
     };
 }
 
-function gameLoop(state) {
-    if (!state) {
-        return;
+function makeRoomId() {
+    let roomId = '';
+    let charsLen = chars.length;
+    for(let i = 0; i < ROOM_ID_LENGTH; i++) {
+        let pos = Math.floor(Math.random() * charsLen);
+        roomId += chars.charAt(pos);
     }
-
-    //zmienia pozycje węża
-    //zwraca numer gracza jesli ktorys wygrał
-    //false wpp
-    return false;
+    return roomId;
 }

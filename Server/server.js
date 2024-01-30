@@ -12,34 +12,12 @@ app.use( express.static( "../Static" ) );
 var server = http.createServer(app);
 var io = socket(server);
 
-app.get('/', function(req, res) {var cookieValue;
-    let generatedWords = [
-        ['kot', 'liść', 'klawiatura', 'palec', 'wieża'],
-        ['kolano', 'pies', 'korona', 'krasnal', 'plastik'],
-        ['egzamin', 'poduszka', 'dom', 'łyżwa', 'mięsień'],
-        ['zeszyt', 'ściąga', 'prezent', 'zlew', 'śnieg'],
-        ['Egipt', 'karton', 'bramka', 'hasło', 'igła']
-    ];
-    let agentsIdentities = [
-        [1, 1, 1, 2, 0],
-        [0, 2, 1, 0, 0],
-        [1, 2, 3, 0, 0],
-        [0, 0, 0, 2, 1],
-        [2, 1, 1, 2, 2]
-    ];
-    let revealedIdentities = [
-        [0, 0, 1, 1, 1],
-        [1, 1, 1, 0, 1],
-        [0, 0, 0, 1, 0],
-        [0, 0, 0, 1, 1],
-        [1, 0, 1, 1, 0]
-    ];
-    res.render('index', {wordRows : generatedWords, revealedIdentities: revealedIdentities, agentsIdentities: agentsIdentities});
-});
+const { initGame, makeRoomId } = require('./game');
+const { PLAYERS_NUMBER, GRID_SIZE } = require('./constants');
 
-const { initGame, gameLoop } = require('./game');
-const { PLAYERS_NUMBER } = require('./constants');
-const { makeRoomId } = require('./utils');
+app.get('/', function(req, res) {
+    res.render('index', {gridSize: GRID_SIZE});
+});
 
 const roomState = {};
 const playersCurrentRoom = {};
@@ -50,6 +28,8 @@ io.on('connection', function(playerSocket) {
     playerSocket.on('giveDescription', handleDescription);
     playerSocket.on('guessAgent', handleGuess);
     playerSocket.on('pass', handlePass);
+    playerSocket.on('chooseTeam', handleChooseTeam);
+    playerSocket.on('startGame', handleStartGame);
 
     function handleJoinGame(roomId) {
         if(!io.sockets.adapter.rooms.has(roomId)){
@@ -68,11 +48,9 @@ io.on('connection', function(playerSocket) {
         playerSocket.join(roomId);
         playerSocket.emit('gameCode', roomId);
         io.sockets.in(roomId).emit('waitingPlayers', roomPlayersNumber+1);
-        playerSocket.number = roomPlayersNumber+1;
 
         if(roomPlayersNumber == PLAYERS_NUMBER-1){
-            io.sockets.in(roomId).emit('startGame');
-            play(roomId);
+            io.sockets.in(roomId).emit('chooseTeams');
         }
         else{
             playerSocket.emit('waitForGame');
@@ -87,7 +65,6 @@ io.on('connection', function(playerSocket) {
         playerSocket.emit('waitForGame');
         roomState[roomId] = initGame();
         playerSocket.join(roomId);
-        playerSocket.number = 1;
     }
 
     function handleDescription(description) {
@@ -96,6 +73,45 @@ io.on('connection', function(playerSocket) {
             return;
         }
         console.log(description);
+    }
+
+    function handleChooseTeam(role) {
+        const roomId = playersCurrentRoom[playerSocket.id];
+        if (!roomId) {
+            return;
+        }
+        const state = roomState[roomId];
+
+        if(state.rolesToPlayers[role] == null){
+            if(playerSocket.id in state.playersToRoles && state.playersToRoles[playerSocket.id] != null){
+                io.sockets.in(roomId).emit('changeTeam', state.playersToRoles[playerSocket.id], null);   
+                state.rolesToPlayers[state.playersToRoles[playerSocket.id]] = null;  
+            }
+            state.rolesToPlayers[role] = playerSocket.id;
+            state.rolesToSockets[role] = playerSocket;
+            state.playersToRoles[playerSocket.id] = role;
+            io.sockets.in(roomId).emit('changeTeam', role, playerSocket.id);
+            if(Object.keys(state.playersToRoles).length == PLAYERS_NUMBER)
+                io.sockets.in(roomId).emit('showStartBtn', true);    
+        }
+        else if(state.rolesToPlayers[role] == playerSocket.id){
+            io.sockets.in(roomId).emit('changeTeam', state.playersToRoles[playerSocket.id], null);   
+            state.rolesToPlayers[role] = null;
+            state.playersToRoles[playerSocket.id] = null;
+            io.sockets.in(roomId).emit('showStartBtn', false);
+        }
+    }
+
+    function handleStartGame(){
+        const roomId = playersCurrentRoom[playerSocket.id];
+        if (!roomId) {
+            return;
+        }
+        const state = roomState[roomId];
+        io.sockets.in(roomId).emit('initWords', state.words, GRID_SIZE);
+        state.rolesToSockets['blueChef'].emit('initAgentsIdentities', state.agentsIdentities, GRID_SIZE);
+        state.rolesToSockets['redChef'].emit('initAgentsIdentities', state.agentsIdentities, GRID_SIZE);
+        io.sockets.in(roomId).emit('startGame');
     }
 
     function handleGuess(position) {
@@ -117,26 +133,9 @@ io.on('connection', function(playerSocket) {
 });
 
 
-function play(roomId) {
-    
-    const winner = gameLoop(roomState[roomId]);
-
-    if (!winner) {
-        emitGameState(roomId, roomState[roomId]);
-    } else {
-        emitGameOver(roomId, winner);
-        roomState[roomId] = null;
-    }
-}
-
-
-function emitGameState(room, gameState) {
-    // Send this event to everyone in the room.
-    io.sockets.in(room).emit('gameState', JSON.stringify(gameState));
-}
-
-function emitGameOver(room, winner) {
-    io.sockets.in(room).emit('gameOver', JSON.stringify(winner));
+function finishGame(roomId, winner){
+    io.sockets.in(roomId).emit('gameOver', winner);
+    roomState[roomId] = null;
 }
 
 server.listen(3000);

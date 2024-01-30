@@ -4,6 +4,108 @@ body{
   font-family: "Stylus";
 }
 
+#chooseTeamsTitle{
+  height: 10%;
+  color: black;
+  background-color: rgba(187, 145, 93, 0.8);
+  border: 5px solid;
+  width: 80%;
+  text-align: center;
+  border-radius:  20px;
+  margin-bottom: 50px;
+}
+
+#TeamsOptions{
+  height: 70%;
+  width: 80%;
+  font-size: 30px;
+  font-weight: bolder;
+  text-align: center;
+  justify-content: center;
+}
+
+.teamRole button{
+  height: 100%;
+  width: 50%;
+  border: 4px solid;
+  border-radius: 60px;
+  border-collapse: separate;
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.unchecked{
+  background-image: url("X.png");
+}
+
+.checked{
+  background-image: url("OK.png");
+}
+
+.unchecked:hover{
+  background-image: url("OK.png");
+}
+
+.checked:hover{
+  background-image: url("X.png");
+}
+
+.teamRole{
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+  border: 4px solid;
+  border-radius: 60px;
+  border-collapse: separate;
+  color: black;
+}
+
+.TeamBlue{
+  background-color: rgba(0, 0, 200, 0.6);
+}
+
+.TeamRed{
+  background-color: rgba(200, 0, 0, 0.6);
+}
+
+.TeamRoleColumn{
+  width: 40%;
+}
+
+.space{
+  width: 20%;
+}
+
+.roleName{
+  height: 20%;
+}
+
+.roleButton{
+  height: 60%; 
+}
+
+.playerName{
+  height: 20%;
+  font-size: 20px;
+}
+
+#StartGameBtn{
+  width: 90%;
+  font-size: 40px;
+  font-weight: bold;
+  background-color: rgb(4, 221, 76);
+  border: 3px solid;
+  border-radius: 10px;
+  margin: auto;
+}
+
+#StartGameBtn:hover{
+  background-color: rgb(9, 175, 64);
+}
+
 #title{
   height: 30%;
   font-size: 130px;
@@ -21,7 +123,7 @@ body{
 }
 
 #menu{
-  height: 80%;
+  height: 70%;
   width: 50%;
 }
 
@@ -62,7 +164,7 @@ h1{
   font-weight: normal;
 }
 
-th, td {
+#wordgrid th, #wordgrid td {
     border: 4px solid;
     border-radius: 10px;
 }
@@ -189,5 +291,16 @@ button{
 .board .revealedNeutral:hover{
   background-image: linear-gradient(rgba(165, 144, 120, 0.5), rgba(165, 144, 120, 0.5)), url("blank.png");
 }
+
+.board .unrevealedBlack:hover{
+  background-image: linear-gradient(rgba(165, 144, 120, 0.5), rgba(165, 144, 120, 0.5)), url("blank.png");
+  color: white;
+}
+
+/*
+słowa na planszy mają przypisane klasy:
+"unrevealedBlue", "unrevealedRed", "unrevealedBlack"
+"revealedBlue", "revealedRed", "revealedNeutral"
+*/
 
 

@@ -15,6 +15,9 @@
       #waitForGame {
         display: none;
       }
+      #chooseTeams {
+        display: none;
+      }
     </style>
     <link rel="stylesheet" href="index.css">
   </head>
@@ -53,6 +56,48 @@
           </div>
         </div>
 
+        <div id="chooseTeams" class="h-100">
+          <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <div id="chooseTeamsTitle"><h1>Wybierzcie drużyny:<h1></div>
+            <table id="TeamsOptions">
+              <tr>
+                <td class="TeamRoleColumn">
+                  <table class="TeamRole TeamBlue" id="teamBlueChef">
+                    <tr class="RoleName"><td>Szef</td></tr>
+                    <tr class="RoleButton"><td><button id="blueChefBtn" onclick="chooseTeam('blueChef')" class="unchecked"></button></td></tr>
+                    <tr class="playerName"><td><span id="blueChefName">_</span></td></tr>
+                  </table>
+                </td>
+                <td rowspan="2" class="space"><button id="StartGameBtn" onclick="startGame()" style="display:none;">START</button></td>
+                <td class="TeamRoleColumn">
+                  <table class="TeamRole TeamRed" id="teamRedChef">
+                    <tr class="RoleName"><td>Szef</td></tr>
+                    <tr class="RoleButton"><td><button id="redChefBtn" onclick="chooseTeam('redChef')" class="unchecked"></button></td></tr>
+                    <tr class="playerName"><td><span id="redChefName">_</span></td></tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td class="TeamRoleColumn">
+                  <table class="TeamRole TeamBlue" id="teamBlueAgent">
+                    <tr class="RoleName"><td>Tajniak</td></tr>
+                    <tr class="RoleButton"><td><button id="blueAgentBtn" onclick="chooseTeam('blueAgent')" class="unchecked"></button></td></tr>
+                    <tr class="playerName"><td><span id="blueAgentName">_</span></td></tr>
+                  </table>
+                </td>
+                <td class="TeamRoleColumn">
+                  <table class="TeamRole TeamRed" id="teamRedAgent">
+                    <tr class="RoleName"><td>Tajniak</td></tr>
+                    <tr class="RoleButton"><td><button id="redAgentBtn" onclick="chooseTeam('redAgent')" class="unchecked"></button></td></tr>
+                    <tr class="playerName"><td><span id="redAgentName">_</span></td></tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+
         <div id="gameScreen" class="h-100">
           <div class="d-flex flex-column align-items-center justify-content-center h-100">
             
@@ -63,38 +108,12 @@
             </div>
 
             <table id="wordGrid" class="board">
-              <% for(let i=0; i<wordRows.length; i++) {%>
+              <% for(let i=0; i<gridSize; i++) {%>
                 <tr>
-                  <% for(let j=0; j<wordRows[i].length; j++) {%>
-                    <% if(revealedIdentities[i][j] == 0 && agentsIdentities[i][j] == 1) {%>
+                  <% for(let j=0; j<gridSize; j++) {%>
                       <td>
-                        <button class="unrevealedBlue" id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>) type="button"><%= wordRows[i][j] %></button>
-                      </td>    
-                    <% } else if(revealedIdentities[i][j] == 0 && agentsIdentities[i][j] == 2) { %>  
-                      <td>
-                        <button class="unrevealedRed" id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>) type="button"><%= wordRows[i][j] %></button>
-                      </td>    
-                    <% } else if(revealedIdentities[i][j] == 0 && agentsIdentities[i][j] == 3) {%>
-                      <td>
-                        <button class="unrevealedBlack" id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>) type="button"><%= wordRows[i][j] %></button>
-                      </td>    
-                    <% } else if(revealedIdentities[i][j] == 0 && agentsIdentities[i][j] == 0) {%>
-                      <td>
-                        <button class="unrevealedNeutral" id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>) type="button"><%= wordRows[i][j] %></button>
-                      </td>    
-                    <% } else if(revealedIdentities[i][j] == 1 && agentsIdentities[i][j] == 1) { %>  
-                      <td>
-                        <button class="revealedBlue" id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>) type="button"><%= wordRows[i][j] %></button>
-                      </td>    
-                    <% } else if(revealedIdentities[i][j] == 1 && agentsIdentities[i][j] == 2) {%>
-                      <td>
-                        <button class="revealedRed" id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>) type="button"><%= wordRows[i][j] %></button>
-                      </td>               
-                    <% } else if(revealedIdentities[i][j] == 1 && agentsIdentities[i][j] == 0) {%>
-                      <td>
-                        <button class="revealedNeutral" id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>) type="button"><%= wordRows[i][j] %></button>
-                      </td>    
-                    <% } %>  
+                        <button id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>) type="button"></button>
+                      </td>
                   <% } %>
                 </tr>                
               <% } %>
