@@ -104,12 +104,11 @@
             
             <div id="descriptionBox">
               <div id="descriptionInput" style="display: none">
-                <input type='text' id='descriptionIn' placeholder="Wpisz wskazówkę"/>
-                <input type='number' id='amountIn' placeholder="0"/>
+                <input type='text' id='descriptionIn' placeholder="Wpisz wskazówkę" autocomplete="off" />
+                <input type='number' id='amountIn' placeholder="0" autocomplete="off"/>
                 <button id='sendDescription'>Wyślij</button>
               </div>
               <div id="descriptionOutput">
-                <!-- slowo + numer -->
                 <input type='text' disabled id='descriptionOut' placeholder="Tu wskazówka" />
                 <input type='number' disabled id='amountOut' placeholder="?" />
               </div>
@@ -121,7 +120,7 @@
                 <tr>
                   <% for(let j=0; j<gridSize; j++) {%>
                       <td>
-                        <button id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>)" type="button"></button>
+                        <button disabled id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>)" type="button"></button>
                       </td>
                   <% } %>
                 </tr>                

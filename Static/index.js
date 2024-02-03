@@ -15,6 +15,8 @@ socket.on('showStartBtn', handleShowStartBtn);
 socket.on('initWords', handleInitWords);
 socket.on('initAgentsIdentities', handleInitAgentsIdentities);
 socket.on('updateDescriptionsVisibility', updateDescriptionsVisibility);
+socket.on('updateButtonsVisibility', updateButtonsVisibility);
+socket.on('newGuess', handleNewGuess);
 
 const waitForGameScreen = document.getElementById('waitForGame');
 const chooseTeamsScreen = document.getElementById('chooseTeams');
@@ -63,7 +65,7 @@ function startGame(){
   socket.emit('startGame');
 }
 
-let gameActive = false;
+let gameActive = true;
 
 function handleWaitForGame() {
   initialScreen.style.display = "none";
@@ -119,19 +121,12 @@ function handleGameState(gameState) {
   console.log(gameState);
 }
 
-function handleGameOver(data) {
+function handleGameOver(winner) {
   if (!gameActive) {
     return;
   }
-  data = JSON.parse(data);
-
   gameActive = false;
-
-  if (data.winner === playerNumber) {
-    alert('You Win!');
-  } else {
-    alert('You Lose :(');
-  }
+  alert('Game Over. Winner: ' + winner);
 }
 
 function handleGameCode(gameCode) {
@@ -145,7 +140,6 @@ function handleWaitingPlayers(number) {
 function sendDescription(description, number) {
   var description = document.getElementById('descriptionIn');
   var number = document.getElementById('amountIn');
-  // console.log('sending new description');
   socket.emit('giveDescription', description.value, number.value);
 }
 
@@ -160,11 +154,21 @@ function handleTooManyPlayers() {
 }
 
 function handleNewDescription(description, number) {
-  // console.log('received new description');
   var descriptionOutput = document.getElementById('descriptionOut');
   var amountOutput = document.getElementById('amountOut');
   descriptionOutput.value = description;
   amountOutput.value = number;
+}
+
+function clearDescription() {
+  var descriptionIn = document.getElementById('descriptionIn');
+  var amountIn = document.getElementById('amountIn');
+  var descriptionOut = document.getElementById('descriptionOut');
+  var amountOut = document.getElementById('amountOut');
+  descriptionIn.value = '';
+  amountIn.value = '';
+  descriptionOut.value = '';
+  amountOut.value = '';
 }
 
 function handleInitWords(words, gridSize){
@@ -190,11 +194,41 @@ function handleInitAgentsIdentities(identities, gridSize){
   }
 }
 
-function updateDescriptionsVisibility() {
+function handleNewGuess(position, identities, turn){
+  let elem = document.getElementById(position[0].toString()+position[1].toString());
+  if(identities[position[0]][position[1]] == 1) {
+    elem.classList.remove('unrevealedBlue');
+    elem.classList.add('revealedBlue');
+  }
+  else if(identities[position[0]][position[1]] == 0) {
+    elem.classList.add('revealedNeutral');
+  }
+  else if(identities[position[0]][position[1]] == 2) {
+    elem.classList.remove('unrevealedRed');
+    elem.classList.add('revealedRed');
+  }
+  else if(identities[position[0]][position[1]] == 3) {
+    elem.classList.remove('unrevealedBlack');
+    // elem.classList.add('revealedBlack');
+  }
+}
+
+
+function updateDescriptionsVisibility(bool) {
+  clearDescription();
   const descriptionsDivIn = document.getElementById('descriptionInput');
-  descriptionsDivIn.style.display = 'block';
   const descriptionsDivOut = document.getElementById('descriptionOutput');
-  descriptionsDivOut.style.display = 'none';
+  descriptionsDivIn.style.display = bool ? 'block' : 'none';
+  descriptionsDivOut.style.display = bool ? 'none' : 'block';
+}
+
+function updateButtonsVisibility(gridSize, bool) {
+  for(let i=0; i<gridSize; i++){
+    for(let j=0; j<gridSize; j++){
+      let elem = document.getElementById(i.toString()+j.toString());
+      elem.disabled = !bool;
+    }
+  }
 }
 
 function reset() {

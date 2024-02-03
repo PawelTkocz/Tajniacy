@@ -22,6 +22,9 @@ app.get('/', function(req, res) {
 const roomState = {};
 const playersCurrentRoom = {};
 
+let turn;
+let question;
+
 io.on('connection', function(playerSocket) {
     playerSocket.on('newGame', handleNewGame);
     playerSocket.on('joinGame', handleJoinGame);
@@ -30,6 +33,8 @@ io.on('connection', function(playerSocket) {
     playerSocket.on('pass', handlePass);
     playerSocket.on('chooseTeam', handleChooseTeam);
     playerSocket.on('startGame', handleStartGame);
+    playerSocket.on('blackClicked', finishGame);
+    playerSocket.on('wrongGuess', QuestionToZero);
 
     function handleJoinGame(roomId) {
         if(!io.sockets.adapter.rooms.has(roomId)){
@@ -73,8 +78,11 @@ io.on('connection', function(playerSocket) {
             return;
         }
         console.log(description, number);
-        // wyslij description do wszystkich ziutkow
         io.sockets.in(roomId).emit('newDescription', description, number);
+        question = number;
+        const state = roomState[roomId];
+
+        state.rolesToSockets[turn == 'blue' ? 'blueAgent' : 'redAgent'].emit('updateButtonsVisibility', GRID_SIZE, true);
     }
 
     function handleChooseTeam(role) {
@@ -113,16 +121,56 @@ io.on('connection', function(playerSocket) {
         io.sockets.in(roomId).emit('initWords', state.words, GRID_SIZE);
         state.rolesToSockets['blueChef'].emit('initAgentsIdentities', state.agentsIdentities, GRID_SIZE);
         state.rolesToSockets['redChef'].emit('initAgentsIdentities', state.agentsIdentities, GRID_SIZE);
-        state.rolesToSockets['blueChef'].emit('updateDescriptionsVisibility');
+        state.rolesToSockets['blueChef'].emit('updateDescriptionsVisibility', true);
         io.sockets.in(roomId).emit('startGame');
+        turn = 'blue';
     }
 
     function handleGuess(position) {
         const roomId = playersCurrentRoom[playerSocket.id];
         if (!roomId) {
             return;
-        }        
+        }       
+        const state = roomState[roomId];
         console.log(position);
+
+        if(state.agentsIdentities[position[0]][position[1]] == 1){
+            if(turn != 'blue'){
+                QuestionToZero();
+            }
+        } else if(state.agentsIdentities[position[0]][position[1]] == 2){
+            if(turn != 'red'){
+                QuestionToZero();
+            }
+        } else if(state.agentsIdentities[position[0]][position[1]] == 3){
+            finishGame(turn == 'blue' ? 'red' : 'blue');
+        } else if(state.agentsIdentities[position[0]][position[1]] == 0){
+            QuestionToZero();
+        }
+        question--;
+        if(question == 0){
+            QuestionToZero();
+        }
+        
+        io.sockets.in(roomId).emit('newGuess', position, state.agentsIdentities, turn);
+    }
+
+    function QuestionToZero(){
+        question = 0;
+        const roomId = playersCurrentRoom[playerSocket.id];
+        if (!roomId) {
+            return;
+        }       
+        const state = roomState[roomId];
+        if(question == 0){
+            turn = turn == 'blue' ? 'red' : 'blue';
+            state.rolesToSockets['blueAgent'].emit('updateButtonsVisibility', GRID_SIZE, false);
+            state.rolesToSockets['redAgent'].emit('updateButtonsVisibility', GRID_SIZE, false);
+            state.rolesToSockets['blueChef'].emit('updateDescriptionsVisibility', turn == 'blue' ? true : false);
+            state.rolesToSockets['redChef'].emit('updateDescriptionsVisibility', turn == 'red' ? true : false);
+            state.rolesToSockets['blueAgent'].emit('updateDescriptionsVisibility', false);
+            state.rolesToSockets['redAgent'].emit('updateDescriptionsVisibility', false);
+        }
     }
 
     function handlePass() {
@@ -133,13 +181,16 @@ io.on('connection', function(playerSocket) {
         console.log("PASS");
     }
 
+    function finishGame(winner){
+        const roomId = playersCurrentRoom[playerSocket.id];
+        if (!roomId) {
+            return;
+        }
+        console.log("FINISH GAME");
+        io.sockets.in(roomId).emit('gameOver', winner);
+        roomState[roomId] = null;
+    }
 });
-
-
-function finishGame(roomId, winner){
-    io.sockets.in(roomId).emit('gameOver', winner);
-    roomState[roomId] = null;
-}
 
 server.listen(3000);
 console.log( 'server listens' );
