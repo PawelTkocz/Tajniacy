@@ -67,12 +67,14 @@ io.on('connection', function(playerSocket) {
         playerSocket.join(roomId);
     }
 
-    function handleDescription(description) {
+    function handleDescription(description, number) {
         const roomId = playersCurrentRoom[playerSocket.id];
         if (!roomId) {
             return;
         }
-        console.log(description);
+        console.log(description, number);
+        // wyslij description do wszystkich ziutkow
+        io.sockets.in(roomId).emit('newDescription', description, number);
     }
 
     function handleChooseTeam(role) {
@@ -111,6 +113,7 @@ io.on('connection', function(playerSocket) {
         io.sockets.in(roomId).emit('initWords', state.words, GRID_SIZE);
         state.rolesToSockets['blueChef'].emit('initAgentsIdentities', state.agentsIdentities, GRID_SIZE);
         state.rolesToSockets['redChef'].emit('initAgentsIdentities', state.agentsIdentities, GRID_SIZE);
+        state.rolesToSockets['blueChef'].emit('updateDescriptionsVisibility');
         io.sockets.in(roomId).emit('startGame');
     }
 

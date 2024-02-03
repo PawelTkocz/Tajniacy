@@ -178,13 +178,22 @@ h1{
   border-radius:  20px;
 }
 
-#descriptions{
+#descriptionBox {
   width: 70%;
   height: 10%;
   margin-bottom: 20px;
 }
 
-#descriptions input[type="text"]{
+#descriptionInput input[type="text"]{
+  background-color: rgb(202, 184, 163);
+  border: 4px solid;
+  border-radius: 10px;
+  width: 60%;
+  height: 90%;
+  font-size: 30px;
+}
+
+#descriptionOutput input[type="text"]{
   background-color: rgb(202, 184, 163);
   border: 4px solid;
   border-radius: 10px;

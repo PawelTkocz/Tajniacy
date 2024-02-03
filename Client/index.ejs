@@ -31,13 +31,14 @@
             <div id="menu">
               <div>
                 <div>
+                  <input type="text" placeholder="Podaj swój nick" id="nicknameInput" />
                   <button type="submit" id="newGameButton">Stwórz nową grę</button>
                 </div>
                 <div id="orText">
                   LUB
                 </div>
                 <div>
-                  <input type="text" placeholder="Podaj kod gry" id="gameCodeInput" />
+                  <input type="text" placeholder="Podaj kod gry" id="gameCodeInput" autocomplete="off" />
                 </div>
                 <div>
                   <button type="submit" id="joinGameButton">Dołącz do gry</button>
@@ -101,18 +102,26 @@
         <div id="gameScreen" class="h-100">
           <div class="d-flex flex-column align-items-center justify-content-center h-100">
             
-            <div id="descriptions">
-              <input type='text' id='description' placeholder="Wpisz wskazówkę"/>
-              <input type='number' id='amount' placeholder="0"/>
-              <button id='sendDescription'>Wyślij</button>
-            </div>
+            <div id="descriptionBox">
+              <div id="descriptionInput" style="display: none">
+                <input type='text' id='descriptionIn' placeholder="Wpisz wskazówkę"/>
+                <input type='number' id='amountIn' placeholder="0"/>
+                <button id='sendDescription'>Wyślij</button>
+              </div>
+              <div id="descriptionOutput">
+                <!-- slowo + numer -->
+                <input type='text' disabled id='descriptionOut' placeholder="Tu wskazówka" />
+                <input type='number' disabled id='amountOut' placeholder="?" />
+              </div>
+            </div> 
+
 
             <table id="wordGrid" class="board">
               <% for(let i=0; i<gridSize; i++) {%>
                 <tr>
                   <% for(let j=0; j<gridSize; j++) {%>
                       <td>
-                        <button id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>) type="button"></button>
+                        <button id=<%= i.toString()+j.toString() %> onclick="clickAgent(<%= i %>, <%= j %>)" type="button"></button>
                       </td>
                   <% } %>
                 </tr>                

@@ -14,6 +14,7 @@ socket.on('changeTeam', handleChangeTeam);
 socket.on('showStartBtn', handleShowStartBtn);
 socket.on('initWords', handleInitWords);
 socket.on('initAgentsIdentities', handleInitAgentsIdentities);
+socket.on('updateDescriptionsVisibility', updateDescriptionsVisibility);
 
 const waitForGameScreen = document.getElementById('waitForGame');
 const chooseTeamsScreen = document.getElementById('chooseTeams');
@@ -141,9 +142,11 @@ function handleWaitingPlayers(number) {
   waitingPlayers.innerText = number + "/" + "4";
 }
 
-function sendDescription(description) {
-  var description = document.getElementById('description');
-  socket.emit('giveDescription', description.value);
+function sendDescription(description, number) {
+  var description = document.getElementById('descriptionIn');
+  var number = document.getElementById('amountIn');
+  // console.log('sending new description');
+  socket.emit('giveDescription', description.value, number.value);
 }
 
 function handleUnknownGameCode() {
@@ -156,9 +159,12 @@ function handleTooManyPlayers() {
   alert('W pokoju znajduje sie maksymalna liczba graczy');
 }
 
-function handleNewDescription(description) {
-  var msg = document.getElementById('messages');
-  msg.innerHTML += description + "<br/>";
+function handleNewDescription(description, number) {
+  // console.log('received new description');
+  var descriptionOutput = document.getElementById('descriptionOut');
+  var amountOutput = document.getElementById('amountOut');
+  descriptionOutput.value = description;
+  amountOutput.value = number;
 }
 
 function handleInitWords(words, gridSize){
@@ -182,6 +188,13 @@ function handleInitAgentsIdentities(identities, gridSize){
         elem.classList.add('unrevealedBlack');
     }
   }
+}
+
+function updateDescriptionsVisibility() {
+  const descriptionsDivIn = document.getElementById('descriptionInput');
+  descriptionsDivIn.style.display = 'block';
+  const descriptionsDivOut = document.getElementById('descriptionOutput');
+  descriptionsDivOut.style.display = 'none';
 }
 
 function reset() {
