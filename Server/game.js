@@ -27,7 +27,7 @@ function initGame() {
         [0, 0, 0, 1, 0],
         [0, 0, 0, 1, 1],
         [1, 0, 1, 1, 0]
-    ]; 
+    ];
 
     return {
         teams: [{
@@ -48,7 +48,7 @@ function initGame() {
             redAgent: null,
         },
         playersToRoles: {},
-        words: generatedWords, 
+        words: generatedWords,
         agentsIdentities: agentsIdentities,
         revealedIdentities: revealedIdentities,
         gridsize: GRID_SIZE,
@@ -59,7 +59,7 @@ function initGame() {
 function makeRoomId() {
     let roomId = '';
     let charsLen = chars.length;
-    for(let i = 0; i < ROOM_ID_LENGTH; i++) {
+    for (let i = 0; i < ROOM_ID_LENGTH; i++) {
         let pos = Math.floor(Math.random() * charsLen);
         roomId += chars.charAt(pos);
     }

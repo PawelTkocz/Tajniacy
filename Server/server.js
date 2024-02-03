@@ -7,7 +7,7 @@ var app = express();
 app.set('view engine', 'ejs');
 app.set('views', '../Client');
 
-app.use( express.static( "../Static" ) );
+app.use(express.static("../Static"));
 
 var server = http.createServer(app);
 var io = socket(server);
@@ -15,8 +15,8 @@ var io = socket(server);
 const { initGame, makeRoomId } = require('./game');
 const { PLAYERS_NUMBER, GRID_SIZE } = require('./constants');
 
-app.get('/', function(req, res) {
-    res.render('index', {gridSize: GRID_SIZE});
+app.get('/', function (req, res) {
+    res.render('index', { gridSize: GRID_SIZE });
 });
 
 const roomState = {};
@@ -25,7 +25,7 @@ const playersCurrentRoom = {};
 let turn;
 let question;
 
-io.on('connection', function(playerSocket) {
+io.on('connection', function (playerSocket) {
     playerSocket.on('newGame', handleNewGame);
     playerSocket.on('joinGame', handleJoinGame);
     playerSocket.on('giveDescription', handleDescription);
@@ -37,14 +37,14 @@ io.on('connection', function(playerSocket) {
     playerSocket.on('wrongGuess', QuestionToZero);
 
     function handleJoinGame(roomId) {
-        if(!io.sockets.adapter.rooms.has(roomId)){
+        if (!io.sockets.adapter.rooms.has(roomId)) {
             playerSocket.emit('unknownGameCode');
             return;
         }
 
         let room = io.sockets.adapter.rooms.get(roomId);
         let roomPlayersNumber = room.size;
-        if(roomPlayersNumber >= PLAYERS_NUMBER) {
+        if (roomPlayersNumber >= PLAYERS_NUMBER) {
             playerSocket.emit('tooManyPlayers');
             return;
         }
@@ -52,17 +52,17 @@ io.on('connection', function(playerSocket) {
         playersCurrentRoom[playerSocket.id] = roomId;
         playerSocket.join(roomId);
         playerSocket.emit('gameCode', roomId);
-        io.sockets.in(roomId).emit('waitingPlayers', roomPlayersNumber+1);
+        io.sockets.in(roomId).emit('waitingPlayers', roomPlayersNumber + 1);
 
-        if(roomPlayersNumber == PLAYERS_NUMBER-1){
+        if (roomPlayersNumber == PLAYERS_NUMBER - 1) {
             io.sockets.in(roomId).emit('chooseTeams');
         }
-        else{
+        else {
             playerSocket.emit('waitForGame');
         }
     }
 
-    function handleNewGame(){
+    function handleNewGame() {
         let roomId = makeRoomId();
         playersCurrentRoom[playerSocket.id] = roomId;
         playerSocket.emit('gameCode', roomId);
@@ -92,27 +92,27 @@ io.on('connection', function(playerSocket) {
         }
         const state = roomState[roomId];
 
-        if(state.rolesToPlayers[role] == null){
-            if(playerSocket.id in state.playersToRoles && state.playersToRoles[playerSocket.id] != null){
-                io.sockets.in(roomId).emit('changeTeam', state.playersToRoles[playerSocket.id], null);   
-                state.rolesToPlayers[state.playersToRoles[playerSocket.id]] = null;  
+        if (state.rolesToPlayers[role] == null) {
+            if (playerSocket.id in state.playersToRoles && state.playersToRoles[playerSocket.id] != null) {
+                io.sockets.in(roomId).emit('changeTeam', state.playersToRoles[playerSocket.id], null);
+                state.rolesToPlayers[state.playersToRoles[playerSocket.id]] = null;
             }
             state.rolesToPlayers[role] = playerSocket.id;
             state.rolesToSockets[role] = playerSocket;
             state.playersToRoles[playerSocket.id] = role;
             io.sockets.in(roomId).emit('changeTeam', role, playerSocket.id);
-            if(Object.keys(state.playersToRoles).length == PLAYERS_NUMBER)
-                io.sockets.in(roomId).emit('showStartBtn', true);    
+            if (Object.keys(state.playersToRoles).length == PLAYERS_NUMBER)
+                io.sockets.in(roomId).emit('showStartBtn', true);
         }
-        else if(state.rolesToPlayers[role] == playerSocket.id){
-            io.sockets.in(roomId).emit('changeTeam', state.playersToRoles[playerSocket.id], null);   
+        else if (state.rolesToPlayers[role] == playerSocket.id) {
+            io.sockets.in(roomId).emit('changeTeam', state.playersToRoles[playerSocket.id], null);
             state.rolesToPlayers[role] = null;
             state.playersToRoles[playerSocket.id] = null;
             io.sockets.in(roomId).emit('showStartBtn', false);
         }
     }
 
-    function handleStartGame(){
+    function handleStartGame() {
         const roomId = playersCurrentRoom[playerSocket.id];
         if (!roomId) {
             return;
@@ -130,39 +130,39 @@ io.on('connection', function(playerSocket) {
         const roomId = playersCurrentRoom[playerSocket.id];
         if (!roomId) {
             return;
-        }       
+        }
         const state = roomState[roomId];
         console.log(position);
 
-        if(state.agentsIdentities[position[0]][position[1]] == 1){
-            if(turn != 'blue'){
+        if (state.agentsIdentities[position[0]][position[1]] == 1) {
+            if (turn != 'blue') {
                 QuestionToZero();
             }
-        } else if(state.agentsIdentities[position[0]][position[1]] == 2){
-            if(turn != 'red'){
+        } else if (state.agentsIdentities[position[0]][position[1]] == 2) {
+            if (turn != 'red') {
                 QuestionToZero();
             }
-        } else if(state.agentsIdentities[position[0]][position[1]] == 3){
+        } else if (state.agentsIdentities[position[0]][position[1]] == 3) {
             finishGame(turn == 'blue' ? 'red' : 'blue');
-        } else if(state.agentsIdentities[position[0]][position[1]] == 0){
+        } else if (state.agentsIdentities[position[0]][position[1]] == 0) {
             QuestionToZero();
         }
         question--;
-        if(question == 0){
+        if (question == 0) {
             QuestionToZero();
         }
-        
+
         io.sockets.in(roomId).emit('newGuess', position, state.agentsIdentities, turn);
     }
 
-    function QuestionToZero(){
+    function QuestionToZero() {
         question = 0;
         const roomId = playersCurrentRoom[playerSocket.id];
         if (!roomId) {
             return;
-        }       
+        }
         const state = roomState[roomId];
-        if(question == 0){
+        if (question == 0) {
             turn = turn == 'blue' ? 'red' : 'blue';
             state.rolesToSockets['blueAgent'].emit('updateButtonsVisibility', GRID_SIZE, false);
             state.rolesToSockets['redAgent'].emit('updateButtonsVisibility', GRID_SIZE, false);
@@ -181,7 +181,7 @@ io.on('connection', function(playerSocket) {
         console.log("PASS");
     }
 
-    function finishGame(winner){
+    function finishGame(winner) {
         const roomId = playersCurrentRoom[playerSocket.id];
         if (!roomId) {
             return;
@@ -193,4 +193,4 @@ io.on('connection', function(playerSocket) {
 });
 
 server.listen(3000);
-console.log( 'server listens' );
+console.log('server listens');

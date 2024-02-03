@@ -53,15 +53,15 @@ function joinGame() {
   socket.emit('joinGame', code);
 }
 
-function clickAgent(row, column){
+function clickAgent(row, column) {
   socket.emit('guessAgent', [row, column]);
 }
 
-function chooseTeam(role){
+function chooseTeam(role) {
   socket.emit('chooseTeam', role);
 }
 
-function startGame(){
+function startGame() {
   socket.emit('startGame');
 }
 
@@ -88,25 +88,25 @@ function handleChooseTeams() {
   gameScreen.style.display = "none";
 }
 
-function handleShowStartBtn(flag){
-  if(flag)
+function handleShowStartBtn(flag) {
+  if (flag)
     startGameBtn.style.display = "block";
   else
     startGameBtn.style.display = "none";
 }
 
-function handleChangeTeam(role, player){
+function handleChangeTeam(role, player) {
   const roles = ['blueAgent', 'blueChef', 'redAgent', 'redChef'];
   const rolesButtons = [blueAgentBtn, blueChefBtn, redAgentBtn, redChefBtn];
   const rolesNames = [blueAgentName, blueChefName, redAgentName, redChefName];
   let i = roles.indexOf(role);
 
-  if(player == null){
+  if (player == null) {
     rolesNames[i].innerHTML = "_";
     rolesButtons[i].classList.add('unchecked');
     rolesButtons[i].classList.remove('checked');
   }
-  else{
+  else {
     rolesNames[i].innerHTML = player;
     rolesButtons[i].classList.add('checked');
     rolesButtons[i].classList.remove('unchecked');
@@ -171,43 +171,43 @@ function clearDescription() {
   amountOut.value = '';
 }
 
-function handleInitWords(words, gridSize){
-  for(let i=0; i<gridSize; i++){
-    for(let j=0; j<gridSize; j++){
-      let elem = document.getElementById(i.toString()+j.toString());
+function handleInitWords(words, gridSize) {
+  for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      let elem = document.getElementById(i.toString() + j.toString());
       elem.innerHTML = words[i][j];
     }
   }
 }
 
-function handleInitAgentsIdentities(identities, gridSize){
-  for(let i=0; i<gridSize; i++){
-    for(let j=0; j<gridSize; j++){
-      let elem = document.getElementById(i.toString()+j.toString());
-      if(identities[i][j] == 1)
+function handleInitAgentsIdentities(identities, gridSize) {
+  for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      let elem = document.getElementById(i.toString() + j.toString());
+      if (identities[i][j] == 1)
         elem.classList.add('unrevealedBlue');
-      else if(identities[i][j] == 2)
+      else if (identities[i][j] == 2)
         elem.classList.add('unrevealedRed');
-      else if(identities[i][j] == 3)
+      else if (identities[i][j] == 3)
         elem.classList.add('unrevealedBlack');
     }
   }
 }
 
-function handleNewGuess(position, identities, turn){
-  let elem = document.getElementById(position[0].toString()+position[1].toString());
-  if(identities[position[0]][position[1]] == 1) {
+function handleNewGuess(position, identities, turn) {
+  let elem = document.getElementById(position[0].toString() + position[1].toString());
+  if (identities[position[0]][position[1]] == 1) {
     elem.classList.remove('unrevealedBlue');
     elem.classList.add('revealedBlue');
   }
-  else if(identities[position[0]][position[1]] == 0) {
+  else if (identities[position[0]][position[1]] == 0) {
     elem.classList.add('revealedNeutral');
   }
-  else if(identities[position[0]][position[1]] == 2) {
+  else if (identities[position[0]][position[1]] == 2) {
     elem.classList.remove('unrevealedRed');
     elem.classList.add('revealedRed');
   }
-  else if(identities[position[0]][position[1]] == 3) {
+  else if (identities[position[0]][position[1]] == 3) {
     elem.classList.remove('unrevealedBlack');
     // elem.classList.add('revealedBlack');
   }
@@ -223,9 +223,9 @@ function updateDescriptionsVisibility(bool) {
 }
 
 function updateButtonsVisibility(gridSize, bool) {
-  for(let i=0; i<gridSize; i++){
-    for(let j=0; j<gridSize; j++){
-      let elem = document.getElementById(i.toString()+j.toString());
+  for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      let elem = document.getElementById(i.toString() + j.toString());
       elem.disabled = !bool;
     }
   }
