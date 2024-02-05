@@ -15,8 +15,16 @@ var io = socket(server);
 const { initGame, makeRoomId } = require('./game');
 const { PLAYERS_NUMBER, GRID_SIZE } = require('./constants');
 
+var points = [];
+var owners = [];
+var players = []
+
 app.get('/', function (req, res) {
     res.render('index', { gridSize: GRID_SIZE });
+});
+
+app.get( '/rooms', (req, res) => {
+    res.render('rooms', {points, owners, players});
 });
 
 const roomState = {};
@@ -48,6 +56,11 @@ io.on('connection', function (playerSocket) {
             return;
         }
 
+        // zwiększam liczbę graczy w danym pokoju
+        for(let i = 0; i < points.length; i++)
+            if(points[i] == roomId)
+                players[i]++;
+        
         playersCurrentRoom[playerSocket.id] = roomId;
         playerSocket.join(roomId);
         playerSocket.emit('gameCode', roomId);
@@ -64,6 +77,9 @@ io.on('connection', function (playerSocket) {
     function handleNewGame() {
         let roomId = makeRoomId();
         playersCurrentRoom[playerSocket.id] = roomId;
+        points.push(roomId);
+        owners.push(playerSocket.id);        // tutaj można dodać nazwę gracza  
+        players.push(1);  
         playerSocket.emit('gameCode', roomId);
         playerSocket.emit('waitingPlayers', 1);
         playerSocket.emit('waitForGame');
