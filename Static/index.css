@@ -137,6 +137,18 @@ body {
   color: black;
 }
 
+#message{
+  height: 50px;
+  line-height: 50px;
+  font-size: 25px;
+  margin: 0 auto;
+  text-align: center;
+  color: black;
+  border: 2px solid;
+  border-radius: 10px;
+  background-color: rgb(243, 216, 181);
+}
+
 #menu input[type="text"],
 #menu button {
   border: 4px solid;
