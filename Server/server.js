@@ -79,7 +79,7 @@ io.on('connection', function (playerSocket) {
         }
         console.log(description, number);
         io.sockets.in(roomId).emit('newDescription', description, number);
-        question = number;
+        question = number + 1;
         const state = roomState[roomId];
 
         state.rolesToSockets[turn == 'blue' ? 'blueAgent' : 'redAgent'].emit('updateButtonsVisibility', GRID_SIZE, true);

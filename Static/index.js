@@ -39,10 +39,12 @@ const redAgentName = document.getElementById('redAgentName');
 const blueChefName = document.getElementById('blueChefName');
 const redChefName = document.getElementById('redChefName');
 const startGameBtn = document.getElementById('StartGameBtn');
+const passButton = document.getElementById('pass');
 
 newGameBtn.addEventListener('click', newGame);
 joinGameBtn.addEventListener('click', joinGame);
 sendDescriptionBtn.addEventListener('click', sendDescription);
+passButton.addEventListener('click', pass);
 
 function newGame() {
   socket.emit('newGame');
@@ -194,7 +196,7 @@ function handleInitAgentsIdentities(identities, gridSize) {
   }
 }
 
-function handleNewGuess(position, identities, turn) {
+function handleNewGuess(position, identities) {
   let elem = document.getElementById(position[0].toString() + position[1].toString());
   if (identities[position[0]][position[1]] == 1) {
     elem.classList.remove('unrevealedBlue');
@@ -229,6 +231,12 @@ function updateButtonsVisibility(gridSize, bool) {
       elem.disabled = !bool;
     }
   }
+  let button = document.getElementById('pass');
+  button.disabled = !bool;
+}
+
+function pass() {
+  socket.emit('wrongGuess');
 }
 
 function reset() {

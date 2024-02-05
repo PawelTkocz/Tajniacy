@@ -223,6 +223,15 @@ input[type="number"] {
   font-size: 30px;
 }
 
+#pass {
+  background-color: burlywood;
+  border: 4px solid;
+  border-radius: 10px;
+  width: 18%;
+  height: 90%;
+  font-size: 30px;
+}
+
 #wordGrid {
   width: 100%;
   height: 80%;
