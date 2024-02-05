@@ -1,0 +1,38 @@
+{
+  "users": [
+    "user1",
+    "user2",
+    "user3",
+    "user4",
+    "user5",
+    "user6",
+    "user7"
+  ],
+  "passwords": [
+    "123",
+    "haslo",
+    "qwerty",
+    "test",
+    "tttt",
+    "topinambur",
+    "hahaha"
+  ],
+  "games_won_cnt": [
+    0,
+    0,
+    2,
+    0,
+    0,
+    0,
+    0
+  ],
+  "games_cnt": [
+    0,
+    0,
+    5,
+    0,
+    0,
+    0,
+    0
+  ]
+}

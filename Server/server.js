@@ -1,13 +1,17 @@
 var http = require('http');
 var socket = require('socket.io');
 var express = require('express');
+var fs = require('fs');
 
 var app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', '../Client');
 
+app.use(express.urlencoded({extended: false}));
+app.use(express.json());
 app.use(express.static("../Static"));
+
 
 var server = http.createServer(app);
 var io = socket(server);
@@ -15,16 +19,100 @@ var io = socket(server);
 const { initGame, makeRoomId } = require('./game');
 const { PLAYERS_NUMBER, GRID_SIZE } = require('./constants');
 
+// mechanizm pokoi
 var points = [];
 var owners = [];
-var players = []
+var players = [];
 
 app.get('/', function (req, res) {
-    res.render('index', { gridSize: GRID_SIZE });
+    res.render('index', { gridSize: GRID_SIZE, login: '', message: '' });
 });
 
 app.get( '/rooms', (req, res) => {
     res.render('rooms', {points, owners, players});
+});
+
+//mechanizm logowania
+var users = [];
+var passwords = [];
+var games_won_cnt = [];
+var games_cnt = [];
+
+function loadUserData() {
+    try {
+        const data = fs.readFileSync('userdata.json', 'utf8');
+        const parsedData = JSON.parse(data);
+        users = parsedData.users || [];
+        passwords = parsedData.passwords || [];
+        games_won_cnt = parsedData.games_won_cnt || [];
+        games_cnt = parsedData.games_cnt || [];
+    } 
+    catch (err) {
+        console.error('Error reading user data from file:', err.message);
+    }
+}
+
+function saveUserData() {
+    const userData = { users, passwords, games_won_cnt, games_cnt };
+    const jsonData = JSON.stringify(userData, null, 2);
+
+    fs.writeFileSync('userdata.json', jsonData, 'utf8');
+}
+
+loadUserData();
+
+app.get('/logowanie', (req, res) => {
+    res.render('logowanie', { nick: '', password: '' });
+});
+
+app.post('/logowanie', (req, res) => {
+    let pom = 0;
+    let username = '';
+    for (let i = 0; i < users.length; i++) {
+        if (users[i] == req.body.nick && passwords[i] == req.body.password) {
+            pom = 1;
+            username = users[i];
+            break;
+        }
+    }
+    if (pom == 1){
+        res.render('index', {gridSize: GRID_SIZE,  login: username, message: 'Zalogowano'});
+    }  
+    else{
+        res.render('index', {gridSize: GRID_SIZE,  login: username, message: 'Błędne hasło'});
+    }
+    
+});
+
+app.post('/rejestracja', (req, res) => {
+    let pom = 0;
+    for (let i = 0; i < users.length; i++) {
+        if (users[i] == req.body.nick) {
+            pom = 1;
+            break;
+        }
+    }
+    if (pom == 1)
+        res.render('index', {gridSize: GRID_SIZE,  login: '', message: 'Użytkownik o takim loginie już istnieje'});
+    else{
+        users.push(req.body.nick);
+        passwords.push(req.body.password);
+        games_won_cnt.push(0);
+        games_cnt.push(0);
+        try {
+            saveUserData();
+            res.render('index', {gridSize: GRID_SIZE,  login: req.body.nick, message: 'Zarejestrowano'});
+        } 
+        catch (err) {
+            console.error('Error saving user data:', err.message);
+            res.render('index', {gridSize: GRID_SIZE,  login: '', message: 'Błąd podczas zapisywania danych'});
+        }
+    }
+        
+});
+
+app.get('/rejestracja', (req, res) => {
+    res.render('rejestracja');
 });
 
 const roomState = {};
@@ -94,7 +182,7 @@ io.on('connection', function (playerSocket) {
         }
         console.log(description, number);
         io.sockets.in(roomId).emit('newDescription', description, number);
-        question = number + 1;
+        question = parseInt(number) + 1;
         const state = roomState[roomId];
 
         state.rolesToSockets['redChef'].emit('updateSendButtonsVisibility', false);
@@ -192,7 +280,7 @@ io.on('connection', function (playerSocket) {
             state.rolesToSockets['redChef'].emit('updateDescriptionsVisibility', turn == 'red' ? true : false);
             state.rolesToSockets['blueAgent'].emit('updateDescriptionsVisibility', false);
             state.rolesToSockets['redAgent'].emit('updateDescriptionsVisibility', false);
-            state.rolesToSockets['blueChef'].emit('updateSendButtonsVisibility', turn == 'blue' ? false : true);    
+            state.rolesToSockets['blueChef'].emit('updateSendButtonsVisibility', turn == 'blue' ? true : false);    
             state.rolesToSockets['redChef'].emit('updateSendButtonsVisibility', turn == 'red' ? true : false);
         }
     }
