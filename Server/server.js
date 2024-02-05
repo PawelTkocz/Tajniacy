@@ -139,6 +139,10 @@ io.on('connection', function (playerSocket) {
         state.rolesToSockets['blueChef'].emit('initAgentsIdentities', state.agentsIdentities, GRID_SIZE);
         state.rolesToSockets['redChef'].emit('initAgentsIdentities', state.agentsIdentities, GRID_SIZE);
         state.rolesToSockets['blueChef'].emit('updateDescriptionsVisibility', true);
+        state.rolesToSockets['blueChef'].emit('setBackgroundColor', true);
+        state.rolesToSockets['blueAgent'].emit('setBackgroundColor', true);
+        state.rolesToSockets['redChef'].emit('setBackgroundColor', false);
+        state.rolesToSockets['redAgent'].emit('setBackgroundColor', false);
         io.sockets.in(roomId).emit('startGame');
         state.rolesToSockets['blueChef'].emit('updateSendButtonsVisibility', true);
         turn = 'blue';
