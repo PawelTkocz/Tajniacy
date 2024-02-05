@@ -18,7 +18,6 @@ socket.on('updateDescriptionsVisibility', updateDescriptionsVisibility);
 socket.on('updateButtonsVisibility', updateButtonsVisibility);
 socket.on('newGuess', handleNewGuess);
 socket.on('updateSendButtonsVisibility', updateSendButtonVisibility);
-socket.on('setBackgroundColor', setBackgroundColor);
 
 const waitForGameScreen = document.getElementById('waitForGame');
 const chooseTeamsScreen = document.getElementById('chooseTeams');
@@ -240,19 +239,6 @@ function updateButtonsVisibility(gridSize, bool) {
 function updateSendButtonVisibility(bool) {
   const sendButton = document.getElementById('sendDescription');
   sendButton.disabled = !bool;
-}
-
-function setBackgroundColor(bool) {
-  const sendButton = document.getElementById('sendDescription');
-  const passButton = document.getElementById('pass');
-  if(bool){
-    sendButton.style.backgroundImage = "linear-gradient(rgba(0, 0, 150, 0.7), rgba(0, 0, 150, 0.5)), url('blank.png')";
-    passButton.style.backgroundImage = "linear-gradient(rgba(0, 0, 150, 0.7), rgba(0, 0, 150, 0.5)), url('blank.png')";
-  }
-  else{
-    sendButton.style.backgroundImage = "linear-gradient(rgba(150, 0, 0, 0.7), rgba(150, 0, 0, 0.5)), url('blank.png')";
-    passButton.style.backgroundImage = "linear-gradient(rgba(150, 0, 0, 0.7), rgba(150, 0, 0, 0.5)), url('blank.png')";
-  }
 }
 
 function pass() {
