@@ -188,6 +188,10 @@ io.on('connection', function (playerSocket) {
             state.rolesToSockets['redChef'].emit('updateDescriptionsVisibility', turn == 'red' ? true : false);
             state.rolesToSockets['blueAgent'].emit('updateDescriptionsVisibility', false);
             state.rolesToSockets['redAgent'].emit('updateDescriptionsVisibility', false);
+            state.rolesToSockets['blueChef'].emit('setBackgroundColor', true);
+            state.rolesToSockets['blueAgent'].emit('setBackgroundColor', true);
+            state.rolesToSockets['redChef'].emit('setBackgroundColor', false);
+            state.rolesToSockets['redAgent'].emit('setBackgroundColor', false);
             state.rolesToSockets['blueChef'].emit('updateSendButtonsVisibility', turn == 'blue' ? false : true);    
             state.rolesToSockets['redChef'].emit('updateSendButtonsVisibility', turn == 'red' ? true : false);
         }
