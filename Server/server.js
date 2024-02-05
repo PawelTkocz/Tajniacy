@@ -30,7 +30,6 @@ io.on('connection', function (playerSocket) {
     playerSocket.on('joinGame', handleJoinGame);
     playerSocket.on('giveDescription', handleDescription);
     playerSocket.on('guessAgent', handleGuess);
-    playerSocket.on('pass', handlePass);
     playerSocket.on('chooseTeam', handleChooseTeam);
     playerSocket.on('startGame', handleStartGame);
     playerSocket.on('blackClicked', finishGame);
@@ -82,6 +81,8 @@ io.on('connection', function (playerSocket) {
         question = number + 1;
         const state = roomState[roomId];
 
+        state.rolesToSockets['redChef'].emit('updateSendButtonsVisibility', false);
+        state.rolesToSockets['blueChef'].emit('updateSendButtonsVisibility', false);
         state.rolesToSockets[turn == 'blue' ? 'blueAgent' : 'redAgent'].emit('updateButtonsVisibility', GRID_SIZE, true);
     }
 
@@ -123,6 +124,7 @@ io.on('connection', function (playerSocket) {
         state.rolesToSockets['redChef'].emit('initAgentsIdentities', state.agentsIdentities, GRID_SIZE);
         state.rolesToSockets['blueChef'].emit('updateDescriptionsVisibility', true);
         io.sockets.in(roomId).emit('startGame');
+        state.rolesToSockets['blueChef'].emit('updateSendButtonsVisibility', true);
         turn = 'blue';
     }
 
@@ -170,15 +172,9 @@ io.on('connection', function (playerSocket) {
             state.rolesToSockets['redChef'].emit('updateDescriptionsVisibility', turn == 'red' ? true : false);
             state.rolesToSockets['blueAgent'].emit('updateDescriptionsVisibility', false);
             state.rolesToSockets['redAgent'].emit('updateDescriptionsVisibility', false);
+            state.rolesToSockets['blueChef'].emit('updateSendButtonsVisibility', turn == 'blue' ? false : true);    
+            state.rolesToSockets['redChef'].emit('updateSendButtonsVisibility', turn == 'red' ? true : false);
         }
-    }
-
-    function handlePass() {
-        const roomId = playersCurrentRoom[playerSocket.id];
-        if (!roomId) {
-            return;
-        }
-        console.log("PASS");
     }
 
     function finishGame(winner) {

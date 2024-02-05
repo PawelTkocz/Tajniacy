@@ -17,6 +17,7 @@ socket.on('initAgentsIdentities', handleInitAgentsIdentities);
 socket.on('updateDescriptionsVisibility', updateDescriptionsVisibility);
 socket.on('updateButtonsVisibility', updateButtonsVisibility);
 socket.on('newGuess', handleNewGuess);
+socket.on('updateSendButtonsVisibility', updateSendButtonVisibility);
 
 const waitForGameScreen = document.getElementById('waitForGame');
 const chooseTeamsScreen = document.getElementById('chooseTeams');
@@ -233,6 +234,11 @@ function updateButtonsVisibility(gridSize, bool) {
   }
   let button = document.getElementById('pass');
   button.disabled = !bool;
+}
+
+function updateSendButtonVisibility(bool) {
+  const sendButton = document.getElementById('sendDescription');
+  sendButton.disabled = !bool;
 }
 
 function pass() {
