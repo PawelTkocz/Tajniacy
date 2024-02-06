@@ -6,6 +6,7 @@ socket.on('gameCode', handleGameCode);
 socket.on('waitingPlayers', handleWaitingPlayers);
 socket.on('waitForGame', handleWaitForGame);
 socket.on('unknownGameCode', handleUnknownGameCode);
+socket.on('unknownUsername', handleUnknownUsername);
 socket.on('tooManyPlayers', handleTooManyPlayers);
 socket.on('newDescription', handleNewDescription);
 socket.on('startGame', handleStartGame);
@@ -153,7 +154,12 @@ function sendDescription(description, number) {
 
 function handleUnknownGameCode() {
   reset();
-  alert('Podano niepoprawny kod pokoju')
+  alert('Podano niepoprawny kod pokoju');
+}
+
+function handleUnknownUsername() {
+  reset();
+  alert('Nie podano nazwy gracza');
 }
 
 function handleTooManyPlayers() {

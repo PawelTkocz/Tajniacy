@@ -137,6 +137,11 @@ io.on('connection', function (playerSocket) {
             return;
         }
 
+        if (username == '' || username == null) {
+            playerSocket.emit('unknownUsername');
+            return;
+        }
+
         let room = io.sockets.adapter.rooms.get(roomId);
         let roomPlayersNumber = room.size;
         if (roomPlayersNumber >= PLAYERS_NUMBER) {
@@ -163,6 +168,10 @@ io.on('connection', function (playerSocket) {
     }
 
     function handleNewGame(username) {
+        if (username == '' || username == null) {
+            playerSocket.emit('unknownUsername');
+            return;
+        }
         let roomId = makeRoomId();
         playersCurrentRoom[playerSocket.id] = roomId;
         points.push(roomId);
