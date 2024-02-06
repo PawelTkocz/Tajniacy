@@ -8,7 +8,7 @@ var app = express();
 app.set('view engine', 'ejs');
 app.set('views', '../Client');
 
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static("../Static"));
 
@@ -28,8 +28,8 @@ app.get('/', function (req, res) {
     res.render('index', { gridSize: GRID_SIZE, login: '', message: '' });
 });
 
-app.get( '/rooms', (req, res) => {
-    res.render('rooms', {points, owners, players});
+app.get('/rooms', (req, res) => {
+    res.render('rooms', { points, owners, players });
 });
 
 //mechanizm logowania
@@ -46,7 +46,7 @@ function loadUserData() {
         passwords = parsedData.passwords || [];
         games_won_cnt = parsedData.games_won_cnt || [];
         games_cnt = parsedData.games_cnt || [];
-    } 
+    }
     catch (err) {
         console.error('Error reading user data from file:', err.message);
     }
@@ -75,13 +75,13 @@ app.post('/logowanie', (req, res) => {
             break;
         }
     }
-    if (pom == 1){
-        res.render('index', {gridSize: GRID_SIZE,  login: username, message: 'Zalogowano'});
-    }  
-    else{
-        res.render('index', {gridSize: GRID_SIZE,  login: username, message: 'Błędne hasło'});
+    if (pom == 1) {
+        res.render('index', { gridSize: GRID_SIZE, login: username, message: 'Zalogowano' });
     }
-    
+    else {
+        res.render('index', { gridSize: GRID_SIZE, login: username, message: 'Błędne hasło' });
+    }
+
 });
 
 app.post('/rejestracja', (req, res) => {
@@ -93,22 +93,22 @@ app.post('/rejestracja', (req, res) => {
         }
     }
     if (pom == 1)
-        res.render('index', {gridSize: GRID_SIZE,  login: '', message: 'Użytkownik o takim loginie już istnieje'});
-    else{
+        res.render('index', { gridSize: GRID_SIZE, login: '', message: 'Użytkownik o takim loginie już istnieje' });
+    else {
         users.push(req.body.nick);
         passwords.push(req.body.password);
         games_won_cnt.push(0);
         games_cnt.push(0);
         try {
             saveUserData();
-            res.render('index', {gridSize: GRID_SIZE,  login: req.body.nick, message: 'Zarejestrowano'});
-        } 
+            res.render('index', { gridSize: GRID_SIZE, login: req.body.nick, message: 'Zarejestrowano' });
+        }
         catch (err) {
             console.error('Error saving user data:', err.message);
-            res.render('index', {gridSize: GRID_SIZE,  login: '', message: 'Błąd podczas zapisywania danych'});
+            res.render('index', { gridSize: GRID_SIZE, login: '', message: 'Błąd podczas zapisywania danych' });
         }
     }
-        
+
 });
 
 app.get('/rejestracja', (req, res) => {
@@ -130,7 +130,7 @@ io.on('connection', function (playerSocket) {
     playerSocket.on('startGame', handleStartGame);
     playerSocket.on('blackClicked', finishGame);
     playerSocket.on('wrongGuess', QuestionToZero);
-    
+
     function handleJoinGame(roomId, username) {
         if (!io.sockets.adapter.rooms.has(roomId)) {
             playerSocket.emit('unknownGameCode');
@@ -150,10 +150,10 @@ io.on('connection', function (playerSocket) {
         }
         roomState[roomId].SocketsToUsernames[playerSocket.id] = username;
         // zwiększam liczbę graczy w danym pokoju
-        for(let i = 0; i < points.length; i++)
-            if(points[i] == roomId)
+        for (let i = 0; i < points.length; i++)
+            if (points[i] == roomId)
                 players[i]++;
-        
+
         playersCurrentRoom[playerSocket.id] = roomId;
         playerSocket.join(roomId);
         playerSocket.emit('gameCode', roomId);
@@ -176,7 +176,7 @@ io.on('connection', function (playerSocket) {
         playersCurrentRoom[playerSocket.id] = roomId;
         points.push(roomId);
         owners.push(username);
-        players.push(1);  
+        players.push(1);
         playerSocket.emit('gameCode', roomId);
         playerSocket.emit('waitingPlayers', 1);
         playerSocket.emit('waitForGame');
@@ -272,7 +272,7 @@ io.on('connection', function (playerSocket) {
         if (question == 0) {
             QuestionToZero();
         }
-        
+
         const revealedIdentities = Array.isArray(state.revealedIdentities) ? state.revealedIdentities.reduce((acc, val) => acc.concat(val), []) : [];
         const onesCount = revealedIdentities.filter(identity => identity === 1).length;
         const twosCount = revealedIdentities.filter(identity => identity === 2).length;
@@ -300,7 +300,7 @@ io.on('connection', function (playerSocket) {
             state.rolesToSockets['redChef'].emit('updateDescriptionsVisibility', turn == 'red' ? true : false);
             state.rolesToSockets['blueAgent'].emit('updateDescriptionsVisibility', false);
             state.rolesToSockets['redAgent'].emit('updateDescriptionsVisibility', false);
-            state.rolesToSockets['blueChef'].emit('updateSendButtonsVisibility', turn == 'blue' ? true : false);    
+            state.rolesToSockets['blueChef'].emit('updateSendButtonsVisibility', turn == 'blue' ? true : false);
             state.rolesToSockets['redChef'].emit('updateSendButtonsVisibility', turn == 'red' ? true : false);
         }
     }

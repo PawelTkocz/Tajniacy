@@ -10,7 +10,6 @@
   <script src="/socket.io/socket.io.js"></script>
 
   <style>
-    
     #rooms {
       position: fixed;
       top: 10px;
@@ -44,19 +43,20 @@
     }
 
     a {
-        text-decoration: none;
-        color: #030000;
-        padding: 10px 20px;
-        border-radius: 5px;
-        transition: background-color 0.3s;
+      text-decoration: none;
+      color: #030000;
+      padding: 10px 20px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
     }
 
     #rooms:hover {
-        background-color: rgb(187, 145, 93);
+      background-color: rgb(187, 145, 93);
     }
+
     a:hover {
-        color : black;
-        text-decoration: none;
+      color: black;
+      text-decoration: none;
     }
   </style>
 
@@ -81,10 +81,10 @@
     <div class="container h-100">
       <div id="initialScreen" class="h-100">
         <div class="d-flex flex-column align-items-center justify-content-center h-100">
-          <div id = "rooms">
+          <div id="rooms">
             <a href="/rooms">Room List</a>
           </div>
-          <div id = "login">
+          <div id="login">
             <a href="/logowanie">Zaloguj się</a>
           </div>
           <div id="title">Tajniacy</div>

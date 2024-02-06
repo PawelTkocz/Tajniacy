@@ -80,13 +80,17 @@
     </header>
 
     <form method="POST">
-        <% for (let i = 0; i < owners.length; i++) { %>
+        <% for (let i=0; i < owners.length; i++) { %>
             <div>
-                <label><%= owners[i] %>'s room:</label>
+                <label>
+                    <%= owners[i] %>'s room:
+                </label>
                 <input type='text' name='<%= "points[" + i + "]" %>' value='<%= points[i] || "" %>' />
-                <span class="playerCount <%= players[i] === 4 ? 'red' : 'green' %>"><%= players[i] %>/4 players</span>
+                <span class="playerCount <%= players[i] === 4 ? 'red' : 'green' %>">
+                    <%= players[i] %>/4 players
+                </span>
             </div>
-        <% } %>
+            <% } %>
     </form>
 
     <a href="/">Back</a>

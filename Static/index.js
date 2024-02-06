@@ -240,7 +240,7 @@ function updateButtonsVisibility(gridSize, bool, revealedIdentities) {
   for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
       let elem = document.getElementById(i.toString() + j.toString());
-      if(revealedIdentities[i][j] == 0) {
+      if (revealedIdentities[i][j] == 0) {
         elem.disabled = !bool;
       }
     }
@@ -263,11 +263,11 @@ function updateSendButtonVisibility(bool) {
 function setBackgroundColor(bool) {
   const sendButton = document.getElementById('sendDescription');
   const passButton = document.getElementById('pass');
-  if(bool){
+  if (bool) {
     sendButton.style.backgroundImage = "linear-gradient(rgba(0, 0, 150, 0.7), rgba(0, 0, 150, 0.5)), url('blank.png')";
     passButton.style.backgroundImage = "linear-gradient(rgba(0, 0, 150, 0.7), rgba(0, 0, 150, 0.5)), url('blank.png')";
   }
-  else{
+  else {
     sendButton.style.backgroundImage = "linear-gradient(rgba(150, 0, 0, 0.7), rgba(150, 0, 0, 0.5)), url('blank.png')";
     passButton.style.backgroundImage = "linear-gradient(rgba(150, 0, 0, 0.7), rgba(150, 0, 0, 0.5)), url('blank.png')";
   }
