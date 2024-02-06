@@ -264,7 +264,7 @@ io.on('connection', function (playerSocket) {
                 QuestionToZero();
             }
         } else if (state.agentsIdentities[position[0]][position[1]] == 3) {
-            finishGame(turn == 'blue' ? 'red' : 'blue');
+            finishGame(turn == 'blue' ? 'czerwoni' : 'niebiescy');
         } else if (state.agentsIdentities[position[0]][position[1]] == 0) {
             QuestionToZero();
         }
@@ -277,9 +277,9 @@ io.on('connection', function (playerSocket) {
         const onesCount = revealedIdentities.filter(identity => identity === 1).length;
         const twosCount = revealedIdentities.filter(identity => identity === 2).length;
         if (onesCount === 8) {
-            finishGame('blue');
+            finishGame('niebiescy');
         } else if (twosCount === 7) {
-            finishGame('red');
+            finishGame('czerwoni');
         }
 
         io.sockets.in(roomId).emit('newGuess', position, state.agentsIdentities, turn);

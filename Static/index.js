@@ -135,7 +135,7 @@ function handleGameOver(winner) {
     return;
   }
   gameActive = false;
-  alert('Game Over. Winner: ' + winner);
+  alert('Koniec gry! Zwyciężyli: ' + winner);
 }
 
 function handleGameCode(gameCode) {
@@ -223,7 +223,7 @@ function handleNewGuess(position, identities) {
   }
   else if (identities[position[0]][position[1]] == 3) {
     elem.classList.remove('unrevealedBlack');
-    // elem.classList.add('revealedBlack');
+    elem.classList.add('revealedBlack');
   }
 }
 
