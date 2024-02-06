@@ -254,7 +254,7 @@ io.on('connection', function (playerSocket) {
         const state = roomState[roomId];
         console.log(position);
         io.sockets.in(roomId).emit('turnOffButton', position, state.agentsIdentities[position[0]][position[1]]);
-        state.revealedIdentities[position[0]][position[1]] = turn == 'blue' ? 1 : 2;
+        state.revealedIdentities[position[0]][position[1]] = state.agentsIdentities[position[0]][position[1]];
         if (state.agentsIdentities[position[0]][position[1]] == 1) {
             if (turn != 'blue') {
                 QuestionToZero();
