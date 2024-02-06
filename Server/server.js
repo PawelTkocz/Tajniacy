@@ -130,8 +130,8 @@ io.on('connection', function (playerSocket) {
     playerSocket.on('startGame', handleStartGame);
     playerSocket.on('blackClicked', finishGame);
     playerSocket.on('wrongGuess', QuestionToZero);
-
-    function handleJoinGame(roomId) {
+    
+    function handleJoinGame(roomId, username) {
         if (!io.sockets.adapter.rooms.has(roomId)) {
             playerSocket.emit('unknownGameCode');
             return;
@@ -143,7 +143,7 @@ io.on('connection', function (playerSocket) {
             playerSocket.emit('tooManyPlayers');
             return;
         }
-
+        roomState[roomId].SocketsToUsernames[playerSocket.id] = username;
         // zwiększam liczbę graczy w danym pokoju
         for(let i = 0; i < points.length; i++)
             if(points[i] == roomId)
@@ -162,16 +162,17 @@ io.on('connection', function (playerSocket) {
         }
     }
 
-    function handleNewGame() {
+    function handleNewGame(username) {
         let roomId = makeRoomId();
         playersCurrentRoom[playerSocket.id] = roomId;
         points.push(roomId);
-        owners.push(playerSocket.id);        // tutaj można dodać nazwę gracza  
+        owners.push(username);
         players.push(1);  
         playerSocket.emit('gameCode', roomId);
         playerSocket.emit('waitingPlayers', 1);
         playerSocket.emit('waitForGame');
         roomState[roomId] = initGame();
+        roomState[roomId].SocketsToUsernames[playerSocket.id] = username;
         playerSocket.join(roomId);
     }
 
@@ -205,7 +206,7 @@ io.on('connection', function (playerSocket) {
             state.rolesToPlayers[role] = playerSocket.id;
             state.rolesToSockets[role] = playerSocket;
             state.playersToRoles[playerSocket.id] = role;
-            io.sockets.in(roomId).emit('changeTeam', role, playerSocket.id);
+            io.sockets.in(roomId).emit('changeTeam', role, state.SocketsToUsernames[playerSocket.id]);
             if (Object.keys(state.playersToRoles).length == PLAYERS_NUMBER)
                 io.sockets.in(roomId).emit('showStartBtn', true);
         }

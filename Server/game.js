@@ -92,6 +92,7 @@ function initGame() {
             blueAgent: null,
             redAgent: null,
         },
+        SocketsToUsernames: {},
         playersToRoles: {},
         words: generatedWords,
         agentsIdentities: agentsIdentities,

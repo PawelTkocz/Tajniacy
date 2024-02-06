@@ -28,6 +28,7 @@ const initialScreen = document.getElementById('initialScreen');
 const newGameBtn = document.getElementById('newGameButton');
 const joinGameBtn = document.getElementById('joinGameButton');
 const gameCodeInput = document.getElementById('gameCodeInput');
+const nicknameInput = document.getElementById('nicknameInput');
 const gameCodeDisplay = document.getElementById('gameCodeDisplay');
 const waitingPlayers = document.getElementById('waitingPlayers');
 const sendDescriptionBtn = document.getElementById('sendDescription');
@@ -49,12 +50,14 @@ sendDescriptionBtn.addEventListener('click', sendDescription);
 passButton.addEventListener('click', pass);
 
 function newGame() {
-  socket.emit('newGame');
+  const username = nicknameInput.value;
+  socket.emit('newGame', username);
 }
 
 function joinGame() {
   const code = gameCodeInput.value;
-  socket.emit('joinGame', code);
+  const username = nicknameInput.value;
+  socket.emit('joinGame', code, username);
 }
 
 function clickAgent(row, column) {
@@ -261,6 +264,7 @@ function pass() {
 
 function reset() {
   gameCodeInput.value = '';
+  nicknameInput.value = '';
   initialScreen.style.display = "block";
   gameScreen.style.display = "none";
   chooseTeamsScreen.style.display = "none";
