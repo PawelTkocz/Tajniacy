@@ -188,7 +188,7 @@ io.on('connection', function (playerSocket) {
 
         state.rolesToSockets['redChef'].emit('updateSendButtonsVisibility', false);
         state.rolesToSockets['blueChef'].emit('updateSendButtonsVisibility', false);
-        state.rolesToSockets[turn == 'blue' ? 'blueAgent' : 'redAgent'].emit('updateButtonsVisibility', GRID_SIZE, true);
+        state.rolesToSockets[turn == 'blue' ? 'blueAgent' : 'redAgent'].emit('updateButtonsVisibility', GRID_SIZE, true, state.revealedIdentities);
     }
 
     function handleChooseTeam(role) {
@@ -244,7 +244,8 @@ io.on('connection', function (playerSocket) {
         }
         const state = roomState[roomId];
         console.log(position);
-
+        io.sockets.in(roomId).emit('turnOffButton', position, state.agentsIdentities[position[0]][position[1]]);
+        state.revealedIdentities[position[0]][position[1]] = turn == 'blue' ? 1 : 2;
         if (state.agentsIdentities[position[0]][position[1]] == 1) {
             if (turn != 'blue') {
                 QuestionToZero();
@@ -262,6 +263,15 @@ io.on('connection', function (playerSocket) {
         if (question == 0) {
             QuestionToZero();
         }
+        
+        const revealedIdentities = Array.isArray(state.revealedIdentities) ? state.revealedIdentities.reduce((acc, val) => acc.concat(val), []) : [];
+        const onesCount = revealedIdentities.filter(identity => identity === 1).length;
+        const twosCount = revealedIdentities.filter(identity => identity === 2).length;
+        if (onesCount === 8) {
+            finishGame('blue');
+        } else if (twosCount === 7) {
+            finishGame('red');
+        }
 
         io.sockets.in(roomId).emit('newGuess', position, state.agentsIdentities, turn);
     }
@@ -275,8 +285,8 @@ io.on('connection', function (playerSocket) {
         const state = roomState[roomId];
         if (question == 0) {
             turn = turn == 'blue' ? 'red' : 'blue';
-            state.rolesToSockets['blueAgent'].emit('updateButtonsVisibility', GRID_SIZE, false);
-            state.rolesToSockets['redAgent'].emit('updateButtonsVisibility', GRID_SIZE, false);
+            state.rolesToSockets['blueAgent'].emit('updateButtonsVisibility', GRID_SIZE, false, state.revealedIdentities);
+            state.rolesToSockets['redAgent'].emit('updateButtonsVisibility', GRID_SIZE, false, state.revealedIdentities);
             state.rolesToSockets['blueChef'].emit('updateDescriptionsVisibility', turn == 'blue' ? true : false);
             state.rolesToSockets['redChef'].emit('updateDescriptionsVisibility', turn == 'red' ? true : false);
             state.rolesToSockets['blueAgent'].emit('updateDescriptionsVisibility', false);

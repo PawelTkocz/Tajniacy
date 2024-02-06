@@ -66,13 +66,13 @@ function initGame() {
     let generatedWords = generateUniqueWords('../Static/words.txt', GRID_SIZE);
     let agentsIdentities = generateAgentsIdentities(GRID_SIZE);
 
-    // let revealedIdentities = [
-    //     [0, 0, 1, 1, 1],
-    //     [1, 1, 1, 0, 1],
-    //     [0, 0, 0, 1, 0],
-    //     [0, 0, 0, 1, 1],
-    //     [1, 0, 1, 1, 0]
-    // ];
+    let revealedIdentities = [
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
+    ];
 
     return {
         teams: [{
@@ -96,7 +96,7 @@ function initGame() {
         playersToRoles: {},
         words: generatedWords,
         agentsIdentities: agentsIdentities,
-        // revealedIdentities: revealedIdentities,
+        revealedIdentities: revealedIdentities,
         gridsize: GRID_SIZE,
         currentTurn: 1
     };

@@ -19,6 +19,7 @@ socket.on('updateButtonsVisibility', updateButtonsVisibility);
 socket.on('newGuess', handleNewGuess);
 socket.on('updateSendButtonsVisibility', updateSendButtonVisibility);
 socket.on('setBackgroundColor', setBackgroundColor);
+socket.on('turnOffButton', turnOffButton);
 
 const waitForGameScreen = document.getElementById('waitForGame');
 const chooseTeamsScreen = document.getElementById('chooseTeams');
@@ -229,15 +230,23 @@ function updateDescriptionsVisibility(bool) {
   descriptionsDivOut.style.display = bool ? 'none' : 'block';
 }
 
-function updateButtonsVisibility(gridSize, bool) {
+function updateButtonsVisibility(gridSize, bool, revealedIdentities) {
   for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
       let elem = document.getElementById(i.toString() + j.toString());
-      elem.disabled = !bool;
+      if(revealedIdentities[i][j] == 0) {
+        elem.disabled = !bool;
+      }
     }
   }
   let button = document.getElementById('pass');
   button.disabled = !bool;
+}
+
+function turnOffButton(position, revealedIdentities) {
+  let elem = document.getElementById(position[0].toString() + position[1].toString());
+  elem.disabled = true;
+  revealedIdentities[position[0]][position[1]] = 1;
 }
 
 function updateSendButtonVisibility(bool) {
